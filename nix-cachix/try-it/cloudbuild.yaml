@@ -1,0 +1,19 @@
+# In this directory, run the following command to build this builder.
+# $ gcloud builds submit .
+
+steps:
+- name: 'gcr.io/$PROJECT_ID/nix-cachix'
+  args:
+    - '-c'
+    - | 
+      cachix authtoken "$$(gcloud secrets versions access latest --secret authtoken)"
+      cachix use earnestresearch-public
+- name: 'gcr.io/$PROJECT_ID/nix-cachix'
+  entrypoint: 'nix-build'
+
+options:
+  volumes:
+  - name: 'etc-nix'
+    path: '/etc/nix'
+  - name: 'config'
+    path: '/builder/home/.config/cachix'
